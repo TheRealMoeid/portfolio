@@ -1,0 +1,8 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" fill="#111114" />
+  <circle cx="256" cy="200" r="88" fill="#232328" />
+  <path d="M96 460c16-96 88-152 160-152s144 56 160 152" fill="#232328" />
+  <text x="256" y="500" text-anchor="middle" font-family="monospace" font-size="14" fill="#9a9aa4">
+    replace with a real photo
+  </text>
+</svg>
