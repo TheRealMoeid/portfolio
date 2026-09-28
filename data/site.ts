@@ -6,8 +6,8 @@ export const site = {
   title: "Software Developer & Computer Engineering Student",
   tagline:
     "I build practical software, automation tools, Telegram applications, and AI-powered solutions.",
-  location: "Based in Iran",
-  age: "21",
+  location: "Based in Iran, Tabriz",
+  age: "23",
   university: "Computer Engineering student",
   url: "https://moeidghiady.dev",
   description:
@@ -24,7 +24,7 @@ export const navItems: NavItem[] = [
 // TODO: replace placeholder email/WhatsApp values below with the real ones before deploying.
 export const socialLinks = {
   github: "https://github.com/TheRealMoeid",
-  email: "mailto:hello@moeidghiady.dev",
-  telegram: "https://t.me/TheRealMoeid",
-  whatsapp: "https://wa.me/00000000000",
+  email: "mailto:moeid.ghiady@gmail.com",
+  telegram: "https://t.me/moeidghiady",
+  whatsapp: "https://wa.me/989028159702",
 };

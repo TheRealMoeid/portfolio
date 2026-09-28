@@ -13,13 +13,13 @@ export function About() {
         <Reveal>
           <div className="space-y-5 text-muted">
             <p>
-              Moeid is a Computer Engineering student focused on turning what
-              he learns into practical software. His work has mainly focused
+              I'm a Computer Engineering student focused on turning what
+              I learn into practical software. My work has mainly focused
               on software development, backend systems, automation, Telegram
               applications, and AI powered solutions.
             </p>
             <p>
-              He is currently building experience through personal projects,
+              I'm currently building experience through personal projects,
               working toward freelance readiness, with the goal of growing as
               a software developer.
             </p>

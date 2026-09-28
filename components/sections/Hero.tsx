@@ -52,7 +52,7 @@ export function Hero() {
       </Reveal>
 
       <Reveal className="relative shrink-0" delay={120}>
-        <div className="relative h-48 w-48 sm:h-64 sm:w-64">
+        <div className="relative h-48 w-48 sm:h-60 sm:w-60 md:h-72 md:w-72 lg:h-80 lg:w-80">
           <div className="absolute inset-0 rounded-2xl border border-accent" />
           {/* Corner-bracket accents for the "technical/viewfinder" feel */}
           <span className="absolute -left-2 -top-2 h-6 w-6 border-l-2 border-t-2 border-accent" />
@@ -65,8 +65,8 @@ export function Hero() {
               src="/images/moeid.png"
               alt={`Portrait of ${site.name}`}
               fill
-              sizes="256px"
-              className="object-cover [filter:grayscale(1)_contrast(1.1)]"
+              sizes="512px"
+              className="object-cover "
               priority
             />
           </div>
