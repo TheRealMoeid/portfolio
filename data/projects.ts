@@ -7,7 +7,7 @@ export const projects: Project[] = [
     description:
       "A Telegram shopping assistant where an LLM interprets what a customer wants and guides them toward it, instead of static menus or scripted flows.",
     tech: ["Python", "aiogram", "OpenAI SDK", "Groq", "Ollama", "asyncio"],
-    status: "Local demo",
+    status: "Local demo available",
     github: "https://github.com/TheRealMoeid/ai-store-assistant",
     illustration: "shopmate",
   },
@@ -17,7 +17,7 @@ export const projects: Project[] = [
     description:
       "An end-to-end V2Ray configuration store on Telegram: customers browse, pay, and submit receipts for verification, while admins manage orders, inventory, and delivery.",
     tech: ["Python", "Aiogram 3", "PostgreSQL", "SQLAlchemy", "Docker"],
-    status: "In progress",
+    status: "Local demo available",
     github: "https://github.com/TheRealMoeid/V2Ray-sales-telegram-bot",
     illustration: "vpnvend",
   },

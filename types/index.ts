@@ -3,7 +3,7 @@ export interface Project {
   title: string;
   description: string;
   tech: string[];
-  status: "In progress" | "Completed" | "Actively in development" | "Local demo";
+  status: "In progress" | "Completed" | "Actively in development" | "Local demo available";
   github: string;
   demo?: string;
   /** Identifier mapped to a line-art illustration component in Projects.tsx */

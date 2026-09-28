@@ -5,7 +5,7 @@ const dotColor: Record<Project["status"], string> = {
   Completed: "bg-accent",
   "In progress": "bg-accent",
   "Actively in development": "bg-accent",
-  "Local demo": "bg-muted",
+  "Local demo available": "bg-muted",
 };
 
 export function StatusBadge({ status }: { status: Project["status"] }) {

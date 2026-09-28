@@ -17,6 +17,7 @@
 }
 
 html {
+  font-size: 106.25%; /* 17px instead of the default 16px */
   scroll-behavior: smooth;
   scroll-padding-top: 5rem;
 }
@@ -55,11 +56,12 @@ button:focus-visible,
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
-  }
+    }
 
   [data-reveal] {
     opacity: 1;
     transform: none;
     transition: none;
   }
+
 }
