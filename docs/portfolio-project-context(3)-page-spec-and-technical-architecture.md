@@ -2,7 +2,7 @@
 
 This file continues from `project_context.md` (overall project direction) and `portfolio-project-context(2).md` (content & information architecture, finalized). Use all three together as the starting context in a new chat. Do not re-derive or re-negotiate anything listed here as "finalized" unless the user explicitly asks to change it.
 
-**Current phase:** Technical Architecture, finalized. Implementation has not started.
+**Current phase:** v1 implemented and running locally (Next.js 16.3.6). Remaining: pre-deploy cleanup, testing, deployment. See `PROJECT_FILE_GUIDE.md` (code map) and `README.md` (checklist).
 
 ---
 
@@ -117,9 +117,10 @@ export interface Project {
   title: string;
   description: string;
   tech: string[];
-  status?: "In progress" | "Completed" | "Actively in development" | "Local demo";
+  status: "In progress" | "Completed" | "Actively in development" | "Local demo available";
   github: string;
   demo?: string;
+  illustration: "shopmate" | "vpnvend" | "mediabot" | "firesystem";
 }
 
 export interface SkillCategory {
@@ -151,6 +152,21 @@ The `slug` field on `Project` is unused for now but sets up future individual pr
 
 ## Not Yet Covered / Next Steps
 
-- **Implementation** is the next phase (Planning → Content/IA → Page Spec → Technical Architecture → **Implementation** → Testing → Deployment). Not started yet.
+- **Implementation** is the next phase (Planning → Content/IA → Page Spec → Technical Architecture → **Implementation** → Testing → Deployment). Done for v1; see the section below for where the build differs from this spec.
 - The pending 5th project (a game project, not yet on GitHub) is still unresolved, see `portfolio-project-context(2).md` for details. Do not add it to `data/projects.ts` until Moeid provides the details.
-- Do not begin implementation/code until explicitly told to move into that phase.
+- Implementation has started and v1 is built. Further code changes should respect the decisions in this file.
+
+---
+
+## Implementation Notes: Where the Build Differs From This Spec
+
+- **Extra files not in the folder structure above:** `components/ui/Reveal.tsx`, `components/sections/ProjectIllustrations.tsx`, `lib/useInView.ts`. `types/index.ts` also has `ContactLink` and `NavItem`, and `Project` has a required `illustration` field.
+- **Status value renamed:** `"Local demo"` became `"Local demo available"` (ShopMate Agent and VPN Vend use it).
+- **Client components:** six files use `"use client"` (`Header`, `BackToTop`, `Reveal`, `useInView`, `Button`, `Contact`). `Contact` needs it because it passes an `onClick` to `Button`.
+- **Button** has a third variant, `soft-red`, used for the unavailable LinkedIn button.
+- **Contact section** is simpler than specified: Email, Telegram, WhatsApp, and GitHub all render as filled buttons; LinkedIn shows as a muted red button reading "(currently unavailable)". No secondary icon links.
+- **Hero photo:** the duotone/grayscale filter was removed; the photo shows in full colour.
+- **Skills:** the site shows six categories. "Digital Logic / FPGA (Quartus II, basic)" from the content file is not on the site (open decision).
+- **Footer LinkedIn** is hard-coded, not driven by `data/contact.ts`.
+- **Framework version:** running on Next.js 16.3.6 with Turbopack (scaffolded on 14).
+- **Open issues:** hero photo path may be gitignored, em dash in the page title breaks the no-em-dash rule, fifth project pending. Details in `README.md` and the last section of `PROJECT_FILE_GUIDE.md`.

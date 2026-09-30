@@ -8,7 +8,7 @@ something.
 
 ## Project Overview
 
-This is a Next.js 14 App Router site written in TypeScript and styled with
+This is a Next.js App Router site (scaffolded on Next.js 14; the dev server now reports Next.js 16.3.6 with Turbopack, see the `package.json` notes) written in TypeScript and styled with
 Tailwind CSS. It is a **single scrolling page** (`app/page.tsx`) built by
 stacking eight section components in order: Header, Hero, Projects, Skills,
 Capabilities, About, Contact, Footer.
@@ -29,9 +29,16 @@ over it. This means:
 Everything is a **React Server Component** by default (the Next.js App
 Router default). A file only becomes a **Client Component** — meaning it can
 use `useState`, `useEffect`, or browser APIs — if it starts with the
-`"use client"` directive on line 1. Four files in this project do:
-`Header.tsx`, `BackToTop.tsx`, `Reveal.tsx`, and `useInView.ts`. Everything
+`"use client"` directive on line 1. Six files in this project do:
+`Header.tsx`, `BackToTop.tsx`, `Reveal.tsx`, `useInView.ts`, `Button.tsx`, and
+`Contact.tsx`. Everything
 else renders once on the server/at build time and ships as static HTML.
+
+**Server/client boundary rule (this caused a real build error):** a Server
+Component cannot pass a function (for example `onClick`) as a prop to a Client
+Component. `Reveal` and `Button` are Client Components, so any file that hands
+them an event handler must itself be a Client Component. That is why
+`Contact.tsx` starts with `"use client"`.
 
 ---
 
@@ -236,7 +243,7 @@ wrong.
 
 **Important components:**
 - `Project.status` is a **union of exact strings**: `"In progress" |
-  "Completed" | "Actively in development" | "Local demo"`. You cannot use
+  "Completed" | "Actively in development" | "Local demo available"`. You cannot use
   any other string here without also adding it to this union (and to
   `StatusBadge.tsx`'s `dotColor` map, see below).
 - `Project.illustration` is likewise a closed union: `"shopmate" |
@@ -401,34 +408,31 @@ visually after changing an icon name, since nothing will warn you.
 
 ### `data/contact.ts`
 
-**Purpose:** The list of links shown in the Contact section (and indirectly
-informs which links are "primary" buttons vs. "secondary" icon links).
+**Purpose:** The list of links shown in the Contact section.
 
 **Responsibilities:** Exports `contactLinks: ContactLink[]`, each with
-`label`, `href`, `icon` (a lucide-react name, same rules as above), and
-`variant` (`"primary" | "secondary" | "disabled"`). Email and Telegram are
-`"primary"` (rendered as filled buttons), WhatsApp and GitHub are
-`"secondary"` (icon links), LinkedIn is `"disabled"` (shown grayed out with
-a "Coming soon" label).
+`label`, `href`, `icon` (a lucide-react name), and `variant` (`"primary" |
+"secondary" | "disabled"`). Email and Telegram are `"primary"`, WhatsApp and
+GitHub are `"secondary"`, LinkedIn is `"disabled"`.
 
-**Dependencies / Related files:** Imports `socialLinks` from
-`data/site.ts` to populate most `href` values (LinkedIn's `href` is a
-placeholder `"#"` since `variant: "disabled"` makes `IconLink.tsx` ignore
-the href anyway). Rendered by `components/sections/Contact.tsx`, which
-filters this array into three groups by `variant`.
+**Important:** `Contact.tsx` currently renders primary and secondary links
+identically (all as filled `Button`s) and only uses each link's `label` and
+`href`, so the `icon` field is unused at the moment.
 
-**Safe to modify:** Reordering, relabeling, or changing which
-existing-in-`socialLinks` link is primary vs. secondary. To activate
-LinkedIn once you have a profile: change its `variant` to `"secondary"`
-and its `href` to the real URL (this is called out in `README.md` too).
+**Dependencies / Related files:** Imports `socialLinks` from `data/site.ts` for
+most `href` values (LinkedIn's `href` is the placeholder `"#"`). Rendered by
+`components/sections/Contact.tsx`.
 
-**Be careful with:** `Contact.tsx` expects `variant` to be exactly one of
-the three allowed strings — anything else means that link won't render in
-any of the three groups (it'll just silently disappear from the section).
+**Safe to modify:** Reordering, relabeling, or changing which link is primary
+vs. secondary. To activate LinkedIn, change its `variant` to `"secondary"` (or
+`"primary"`) and set a real `href`. **Also edit `Footer.tsx`**, where LinkedIn
+is hard-coded as a disabled link and does not read from this file.
 
-**What can break:** A link with a typo'd `variant` (e.g. `"Primary"` with a
-capital P) won't appear anywhere in the Contact section — no error, it
-just vanishes from the page.
+**Be careful with:** `Contact.tsx` expects `variant` to be exactly one of the
+three strings. Anything else means that link silently disappears.
+
+**What can break:** A typo'd `variant` (e.g. `"Primary"`) removes the link from
+the page with no error.
 
 ---
 
@@ -514,6 +518,10 @@ etc.) via `...props`.
 `Header.tsx` ("Get in Touch"), `Hero.tsx` ("View Projects", "Get in
 Touch"), `Contact.tsx` (Email/Telegram primary buttons).
 
+**Current state:** `Button.tsx` is now a `"use client"` component and has a
+third variant, `"soft-red"` (muted red, used by `Contact.tsx` for the
+unavailable LinkedIn button). Variants: `primary`, `outline`, `soft-red`.
+
 **Safe to modify:** Visual tweaks (padding, border radius, hover
 transition) are safe and apply everywhere at once — that's usually what
 you want for a design-system component. Adding a third `variant` is safe
@@ -582,7 +590,7 @@ progress", "Completed", etc.).
 **Responsibilities:** Maps a `Project["status"]` value to a dot color via
 the `dotColor` record, then renders a colored dot + the status text.
 Currently three of the four statuses (`Completed`, `In progress`,
-`Actively in development`) use the accent color dot, and only `Local demo`
+`Actively in development`) use the accent color dot, and only `Local demo available`
 uses the muted gray dot.
 
 **Dependencies / Related files:** Imports the `Project` type from
@@ -635,33 +643,25 @@ if sections are reordered without updating the props.
 
 ### `components/ui/IconLink.tsx`
 
-**Purpose:** A social/contact link that shows a lucide icon + label, with a
-special "disabled" rendering for links that don't exist yet (LinkedIn).
+**Purpose:** A social/contact link with a lucide icon and a label, with a
+special "disabled" rendering for links that do not exist yet (LinkedIn).
 
 **Responsibilities:** Looks up an icon component by string name from
-`lucide-react` (same dynamic-lookup pattern as `Capabilities.tsx`). If
-`disabled` is true, renders a non-clickable `<span>` with a "Coming soon"
-suffix instead of an `<a>`. Otherwise renders a real link, auto-detecting
-whether to add `target="_blank" rel="noopener noreferrer"` based on
-whether the `href` starts with `"http"` (so `mailto:` and internal anchor
-links don't get `target="_blank"`, but external URLs do).
+`lucide-react`. If `disabled` is true, renders a non-clickable `<span>` whose
+visible text is the label plus "(currently unavailable)" (its `aria-label` still
+says "coming soon", a small mismatch you may want to align). Otherwise renders
+a real link and adds `target="_blank" rel="noopener noreferrer"` only when the
+`href` starts with `"http"`.
 
-**Dependencies / Related files:** Used by `Hero.tsx` (GitHub/Telegram/
-Email icon row), `Contact.tsx` (WhatsApp/GitHub secondary links + LinkedIn
-disabled link), `Footer.tsx` (Email/GitHub/LinkedIn).
+**Dependencies / Related files:** Used by `Hero.tsx` (GitHub/Telegram/Email
+row) and `Footer.tsx` (Email/GitHub/LinkedIn). **It is no longer used by
+`Contact.tsx`**, which now renders everything through `Button`.
 
-**Safe to modify:** Visual styling is safe to change. The `icon` prop
-follows the same lucide-react naming rule as `data/capabilities.ts` — must
-be an exact export name.
+**Safe to modify:** Visual styling. The `icon` prop follows the same
+lucide-react naming rule as `data/capabilities.ts`.
 
-**Be careful with:** The `href.startsWith("http")` check is how it decides
-whether to open in a new tab — if you ever need a non-http, non-mailto
-link that should still open in a new tab (unlikely on this site), this
-logic would need adjusting.
-
-**What can break:** An invalid `icon` name silently renders no icon (same
-non-crashing failure mode as `Capabilities.tsx`) — the label text still
-shows, so it's easy to miss visually if you're not checking.
+**What can break:** An invalid `icon` name silently renders no icon (the label
+still shows).
 
 ---
 
@@ -784,6 +784,11 @@ duotone look.
 **Dependencies / Related files:** Reads `site` and `socialLinks` from
 `data/site.ts`. Uses `Button`, `IconLink`, `Reveal` from `components/ui/`.
 Uses Next.js's `<Image>` component pointed at `/public/images/moeid.png`.
+
+**Current state of the photo filter:** the filter has been removed in the code.
+The `<Image>` className is just `object-cover`, so the photo shows in full
+colour. The filter description above is the original design; add
+`[filter:grayscale(1)_contrast(1.1)]` back to the className to restore it.
 
 **Safe to modify:** All text is pulled from `data/site.ts`, so change it
 there rather than here. The photo filter (currently full grayscale +
@@ -955,23 +960,32 @@ inline SVG.
 
 **Purpose:** The centered Contact section.
 
-**Responsibilities:** Splits `contactLinks` from `data/contact.ts` into
-three groups by `variant` (`primary`, `secondary`, `disabled`), rendering
-primary links as filled `Button`s, secondary as `IconLink`s, and disabled
-as grayed-out `IconLink`s with a "Coming soon" tag.
+**Client Component:** the file starts with `"use client"`. This is required,
+not optional. The disabled LinkedIn button is given an `onClick` (to
+`preventDefault`), and a Server Component cannot pass a function to `Button` or
+`Reveal` (both Client Components). Without `"use client"` the page returns a 500
+with "Event handlers cannot be passed to Client Component props".
 
-**Dependencies / Related files:** Reads `contactLinks` from
-`data/contact.ts`. Uses `SectionHeading` (note: no `index` prop, unlike
-other sections — Contact was specified without a numbered heading), 
-`Button`, `IconLink`, `Reveal`.
+**Responsibilities:** Splits `contactLinks` into three groups by `variant`.
+Primary (Email, Telegram) and secondary (WhatsApp, GitHub) links are **both
+rendered as filled `primary` Buttons**, so they look identical. Disabled links
+(LinkedIn) render as a `soft-red` Button with `href` undefined,
+`aria-disabled="true"`, `tabIndex={-1}`, and the text "{label} (currently
+unavailable)".
 
-**Safe to modify:** Layout/spacing changes are safe. Which links are
-primary/secondary/disabled is controlled in `data/contact.ts`, not here.
+**Dependencies / Related files:** `contactLinks` from `data/contact.ts`;
+`SectionHeading` (no `index` prop, Contact has no number); `Button`; `Reveal`.
 
-**What can break:** Low risk — the filtering logic (`.filter(...)`) just
-produces empty arrays (and renders nothing in that group) if
-`contactLinks` ever has no entries of a given `variant`, rather than
-erroring.
+**Differs from the page spec:** the spec called for two large primary buttons
+plus smaller secondary icon links and a muted "Coming soon" LinkedIn. The
+current code is simpler. Either update the spec or restyle this section.
+
+**Safe to modify:** Layout/spacing and the disabled-button text. If you would
+rather keep this file a Server Component, remove the `onClick` and use
+`pointer-events-none` in the class list instead, then drop `"use client"`.
+
+**What can break:** Removing `"use client"` while the `onClick` exists brings
+back the 500 error. A typo'd `variant` in the data file makes that link vanish.
 
 ---
 
@@ -989,7 +1003,7 @@ GitHub/disabled-LinkedIn `IconLink`s.
 `<footer>` element — this is a load-bearing ID that `BackToTop.tsx`
 depends on to know when to appear.**
 
-**Safe to modify:** Adding/removing icon links, text styling.
+**Safe to modify:** Adding/removing icon links, text styling. The LinkedIn entry is hard-coded here (`href="#"`, `disabled`) and does not read from `data/contact.ts`, so activating LinkedIn means editing this file as well.
 
 **Be careful with:** **Do not rename or remove `id="site-footer"`
 without also updating `BackToTop.tsx`** — that ID is the only thing
@@ -1167,6 +1181,15 @@ the tooling manage them.
 
 ## `public/images/`
 
+> **Deployment risk:** `.gitignore` contains `public/images/Moeid.png`. The code
+> uses `/images/moeid.png`. On Windows (case-insensitive) Git can treat these as
+> the same file and ignore your hero photo, so it would be missing on
+> Vercel/Cloudflare. Check with `git check-ignore -v public/images/moeid.png`
+> and remove that line from `.gitignore` if it matches.
+
+- **`moeid-placeholder.svg`** — a grey silhouette placeholder. Not referenced by
+  any component at the moment.
+
 - **`moeid.png`** — the hero photo, referenced by `components/sections/
   Hero.tsx`'s `<Image src="/images/moeid.png" ...>`. Replacing this file
   (keep the same filename, or update the `src` path in `Hero.tsx` if you
@@ -1253,7 +1276,7 @@ app/globals.css   ([data-reveal] / [data-reveal="visible"] CSS rules
 | "What I Can Build" card icons                                 | `data/capabilities.ts`                                  | `icon` field (must be a valid `lucide-react` export name) |
 | The embedded/hardware closing line                             | `data/capabilities.ts`                                  | `embeddedNote` |
 | Contact section buttons/links, or which are primary/secondary | `data/contact.ts`                                        | `contactLinks` |
-| Activating LinkedIn once you have a profile                    | `data/contact.ts`                                        | change LinkedIn's `variant` + `href` |
+| Activating LinkedIn once you have a profile | `data/contact.ts` **and** `components/sections/Footer.tsx` | contact: change `variant` + `href`; footer: remove `disabled`, set real `href` |
 | About section bio paragraphs                                    | `components/sections/About.tsx`                        | the two `<p>` tags (hardcoded here, not in `data/`) |
 | About section's abstract graphic                                | `components/sections/About.tsx`                        | `AbstractGraphic` function |
 | Footer content/links                                             | `components/sections/Footer.tsx` (structure) + `data/site.ts` (values) | — |
@@ -1315,3 +1338,34 @@ renaming something:**
 **Don't hand-edit:** `package-lock.json`, `next-env.d.ts`, and (once
 created locally) the `.next/` and `node_modules/` folders — see the
 "Generated / Do-Not-Hand-Edit Files" section above.
+
+---
+
+## Known Drift and Open Items (as of 2026-09-30)
+
+Things where the code, the docs, or the planning files disagree, or that still
+need a decision:
+
+1. **Client components are six, not four:** `Header`, `BackToTop`, `Reveal`,
+   `useInView`, `Button`, `Contact`.
+2. **Contact layout** is simpler than the page spec (all buttons look primary,
+   no icon links). See the `Contact.tsx` section.
+3. **Em dash in page title:** `app/layout.tsx` builds the title as
+   `${site.name} — ${site.title}` (three places: `title`, `openGraph.title`,
+   `twitter.title`). The content rule says no em dashes anywhere on the site.
+   Replace with a colon, pipe, or hyphen.
+4. **Skills list** in `data/skills.ts` has six categories. The content file
+   (context 2) also lists "Digital Logic / FPGA (Quartus II, basic)". Decide
+   whether it stays off the site or gets added.
+5. **Hero photo filter** was removed (full colour). The page spec still says
+   "subtle dark duotone".
+6. **`data/site.ts`:** the `email` and `whatsapp` values now look filled in, but
+   the `// TODO: replace placeholder...` comment is still there. Confirm they
+   are the public ones you want, then delete the comment.
+7. **Fifth project (game)** is still pending. Adding it needs the three-step
+   change described under `data/projects.ts`.
+8. **Next.js version:** the terminal shows 16.3.6 (Turbopack). The copies of
+   `package.json` and `package-lock.json` in the project files still show
+   `^14.2.5`. Re-export them so the project files match.
+9. **Project files vs local code:** the `Contact.tsx` and `Button.tsx` in the
+   project files should be the current versions (with `"use client"`).

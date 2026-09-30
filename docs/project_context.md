@@ -400,7 +400,9 @@ The content architecture should allow future projects and sections to be added w
 
 ## 9. What We Are NOT Doing Yet
 
-At the current stage, do NOT:
+**Historical note: this list is from the planning phase. v1 implementation is now done; only the database, analytics, contact backend, and deployment items below are still not built.**
+
+At the planning stage, the rule was do NOT:
 
 - write implementation code
 - create React components
@@ -509,7 +511,7 @@ Before making implementation decisions:
 
 ## 13. Current Project Status
 
-**Phase:** Planning / Content & Information Architecture
+**Phase:** v1 implemented and running locally; pre-deployment cleanup and testing
 
 **Chosen approach:** Next.js + React + TypeScript + Tailwind CSS
 
@@ -525,7 +527,7 @@ Before making implementation decisions:
 
 **Design direction:** Minimal + technical + editorial
 
-**Implementation status:** Not started
+**Implementation status:** v1 built (Next.js App Router, now on Next.js 16.3.6). See `PROJECT_FILE_GUIDE.md` for the code map and `README.md` for the pre-deploy checklist.
 
-**Next step:** Define the actual content and detailed information architecture for every section.
+**Next step:** Work through the README pre-deploy checklist (photo in `.gitignore`, em dash in title, LinkedIn, domain, OG image), add the fifth project when ready, test on real devices, then deploy.
 
