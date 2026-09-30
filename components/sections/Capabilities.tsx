@@ -22,24 +22,24 @@ export function Capabilities() {
           )[capability.icon];
 
           return (
-            <Reveal key={capability.title} delay={i * 60}>
-              <Card>
-                {Icon && (
-                  <Icon
-                    size={22}
-                    className="text-accent"
-                    aria-hidden="true"
-                  />
-                )}
-                <h3 className="mt-4 font-display text-base font-semibold text-foreground">
-                  {capability.title}
-                </h3>
-                <p className="mt-2 text-sm text-muted">
-                  {capability.description}
-                </p>
-              </Card>
-            </Reveal>
-          );
+          <Reveal key={capability.title} delay={i * 60} className="h-full">
+            <Card className="h-full">
+              {Icon && (
+                <Icon
+                  size={22}
+                  className="text-accent"
+                  aria-hidden="true"
+                />
+              )}
+              <h3 className="mt-4 font-display text-base font-semibold text-foreground">
+                {capability.title}
+              </h3>
+              <p className="mt-2 text-sm text-muted">
+                {capability.description}
+              </p>
+            </Card>
+          </Reveal>
+        );
         })}
       </div>
 

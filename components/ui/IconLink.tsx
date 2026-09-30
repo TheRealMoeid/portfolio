@@ -29,7 +29,7 @@ export function IconLink({
       >
         {Icon && <Icon size={18} aria-hidden="true" />}
         {label}
-        <span className="font-mono text-xs">Coming soon</span>
+        <span className="font-mono text-xs">(currently unavailable)</span>
       </span>
     );
   }

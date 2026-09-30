@@ -1,7 +1,7 @@
+"use client";
 import { contactLinks } from "@/data/contact";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Button } from "@/components/ui/Button";
-import { IconLink } from "@/components/ui/IconLink";
 import { Reveal } from "@/components/ui/Reveal";
 
 export function Contact() {
@@ -22,34 +22,30 @@ export function Contact() {
       </Reveal>
 
       <Reveal delay={100}>
-        <div className="flex flex-col items-center gap-8">
-          <div className="flex flex-wrap justify-center gap-4">
-            {primary.map((link) => (
-              <Button key={link.label} href={link.href} variant="primary">
-                {link.label}
-              </Button>
-            ))}
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-6">
-            {secondary.map((link) => (
-              <IconLink
-                key={link.label}
-                href={link.href}
-                icon={link.icon}
-                label={link.label}
-              />
-            ))}
-            {disabled.map((link) => (
-              <IconLink
-                key={link.label}
-                href={link.href}
-                icon={link.icon}
-                label={link.label}
-                disabled
-              />
-            ))}
-          </div>
+        <div className="flex flex-wrap justify-center gap-4">
+          {primary.map((link) => (
+            <Button key={link.label} href={link.href} variant="primary">
+              {link.label}
+            </Button>
+          ))}
+          {secondary.map((link) => (
+            <Button key={link.label} href={link.href} variant="primary">
+              {link.label}
+            </Button>
+          ))}
+          {disabled.map((link) => (
+            <Button
+              key={link.label}
+              href={undefined}
+              variant="soft-red"
+              aria-disabled="true"
+              tabIndex={-1}
+              onClick={(e) => e.preventDefault()}
+              className="cursor-default"
+            >
+              {link.label} (currently unavailable)
+            </Button>
+          ))}
         </div>
       </Reveal>
     </section>
