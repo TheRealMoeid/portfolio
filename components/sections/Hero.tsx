@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { Github, Send, Mail } from "lucide-react";
 import { site, socialLinks } from "@/data/site";
 import { Button } from "@/components/ui/Button";
 import { IconLink } from "@/components/ui/IconLink";
@@ -51,7 +50,15 @@ export function Hero() {
         </div>
       </Reveal>
 
-      <Reveal className="relative shrink-0" delay={120}>
+      <Reveal className="flex shrink-0 flex-col items-center gap-6" delay={120}>
+        <div className="inline-flex items-center gap-3 rounded-full border border-border bg-surface px-4 py-2 font-mono text-sm text-foreground">
+          <span className="relative flex h-3 w-3">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75 motion-reduce:animate-none" />
+            <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500" />
+          </span>
+          Currently available for new projects
+        </div>
+
         <div className="relative h-48 w-48 sm:h-60 sm:w-60 md:h-72 md:w-72 lg:h-80 lg:w-80">
           <div className="absolute inset-0 rounded-2xl border border-accent" />
           {/* Corner-bracket accents for the "technical/viewfinder" feel */}
@@ -66,7 +73,7 @@ export function Hero() {
               alt={`Portrait of ${site.name}`}
               fill
               sizes="512px"
-              className="object-cover "
+              className="object-cover"
               priority
             />
           </div>

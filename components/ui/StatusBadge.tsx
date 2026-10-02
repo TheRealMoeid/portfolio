@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 const dotColor: Record<Project["status"], string> = {
   Completed: "bg-accent",
   "In progress": "bg-accent",
-  "Actively in development": "bg-accent",
+  "Actively in development": "bg-green-500",
   "Local demo available": "bg-muted",
 };
 
