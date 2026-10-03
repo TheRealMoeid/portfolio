@@ -56,7 +56,7 @@ export function Hero() {
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75 motion-reduce:animate-none" />
             <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500" />
           </span>
-          Currently available for new projects
+          available for new projects
         </div>
 
         <div className="relative h-48 w-48 sm:h-60 sm:w-60 md:h-72 md:w-72 lg:h-80 lg:w-80">
