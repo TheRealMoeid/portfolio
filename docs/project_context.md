@@ -400,7 +400,7 @@ The content architecture should allow future projects and sections to be added w
 
 ## 9. What We Are NOT Doing Yet
 
-**Historical note: this list is from the planning phase. v1 implementation is now done; only the database, analytics, contact backend, and deployment items below are still not built.**
+**Historical note: this list is from the planning phase. v1 implementation is now done; only the database, contact backend, and deployment items below are still not built. Basic analytics now exists: `@vercel/analytics` is mounted in `app/layout.tsx` (it only reports when deployed on Vercel).**
 
 At the planning stage, the rule was do NOT:
 
@@ -515,19 +515,19 @@ Before making implementation decisions:
 
 **Chosen approach:** Next.js + React + TypeScript + Tailwind CSS
 
-**Chosen first-version structure:**
+**Chosen first-version structure (as implemented, after the sticky header):**
 
 - Hero
 - Selected Projects
-- About
 - Skills
 - Capabilities / What I Can Build
+- About
 - Contact
 - Footer
 
 **Design direction:** Minimal + technical + editorial
 
-**Implementation status:** v1 built (Next.js App Router, now on Next.js 16.3.6). See `PROJECT_FILE_GUIDE.md` for the code map and `README.md` for the pre-deploy checklist.
+**Implementation status:** v1 built (Next.js App Router; `package.json` pins Next.js `^15.5.27`). See `PROJECT_FILE_GUIDE.md` for the code map and `README.md` for the pre-deploy checklist.
 
-**Next step:** Work through the README pre-deploy checklist (photo in `.gitignore`, em dash in title, LinkedIn, domain, OG image), add the fifth project when ready, test on real devices, then deploy.
+**Next step:** Work through the README pre-deploy checklist (real domain in `site.url`, OG image, LinkedIn, optionally a title separator and clearer Hero pill wording), add the fifth project when ready, test on real devices, then deploy. (The `.gitignore` photo problem and the em dash in the title are already fixed, and the site is already deployed on Vercel at `portfolio-chi-green-13ro5dp3d1.vercel.app`.)
 

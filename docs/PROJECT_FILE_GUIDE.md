@@ -8,10 +8,11 @@ something.
 
 ## Project Overview
 
-This is a Next.js App Router site (scaffolded on Next.js 14; the dev server now reports Next.js 16.3.6 with Turbopack, see the `package.json` notes) written in TypeScript and styled with
+This is a Next.js App Router site (scaffolded on Next.js 14; `package.json` now pins `next` at `^15.5.27` and the lockfile resolves 15.5.27) written in TypeScript and styled with
 Tailwind CSS. It is a **single scrolling page** (`app/page.tsx`) built by
 stacking eight section components in order: Header, Hero, Projects, Skills,
-Capabilities, About, Contact, Footer.
+Capabilities, About, Contact, Footer. A ninth, purely decorative component
+(`FloatingIcons`) sits behind the sections on very wide screens.
 
 The architecture is **data-driven**: every section component is a "dumb"
 renderer that imports its content from a matching file in `data/` and maps
@@ -47,13 +48,15 @@ them an event handler must itself be a Client Component. That is why
 ```
 portfolio/
 ├── app/
-│   ├── layout.tsx          # Root HTML shell, fonts, <head> metadata
+│   ├── layout.tsx          # Root HTML shell, fonts, <head> metadata, Vercel Analytics
 │   ├── page.tsx             # Composes all sections in order
-│   └── globals.css          # Theme colors, base styles, scroll-reveal CSS
+│   ├── globals.css          # Theme colors, base styles, scroll-reveal CSS
+│   └── icon.svg             # Favicon (Next.js file convention): "MG" monogram
 ├── components/
 │   ├── sections/             # One file per page section
 │   │   ├── Header.tsx
 │   │   ├── Hero.tsx
+│   │   ├── FloatingIcons.tsx
 │   │   ├── Projects.tsx
 │   │   ├── ProjectIllustrations.tsx
 │   │   ├── Skills.tsx
@@ -84,12 +87,14 @@ portfolio/
 ├── public/
 │   └── images/
 │       ├── moeid.png            # Hero photo
+│       ├── moeid-placeholder.svg # Grey silhouette placeholder (unused)
 │       └── og-image.png         # Social share preview image (placeholder)
 ├── tailwind.config.ts         # Design tokens (colors, fonts, max-width)
 ├── postcss.config.js          # Wires Tailwind into the CSS build
 ├── next.config.js             # Next.js build/runtime settings
 ├── tsconfig.json              # TypeScript compiler settings, @/ path alias
 ├── package.json                # Dependencies and npm scripts
+├── .gitignore                  # node_modules, .next, next-env.d.ts, docs/moeid-portfolio.zip, etc.
 ├── package-lock.json           # Exact locked dependency versions (generated)
 ├── next-env.d.ts                # Next.js TypeScript ambient types (generated)
 └── README.md                    # Setup instructions + outstanding TODOs
@@ -111,28 +116,38 @@ title, description, Open Graph / Twitter preview tags).
   (`--font-display`, `--font-body`, `--font-mono`).
 - Builds the `metadata` object Next.js uses to populate `<title>`,
   `<meta name="description">`, and Open Graph/Twitter share-card tags.
-- Renders the outer `<html>`/`<body>` and attaches the font CSS variables
-  plus the default body font class to `<body>`.
+- Builds the title string itself as `` `${site.name}  ${site.title}` `` (used
+  for `title`, `openGraph.title`, and `twitter.title`). The separator is
+  currently two plain spaces (see Known Drift item 3).
+- Renders the outer `<html lang="en">`/`<body>`, attaches the font CSS
+  variables plus the default body font class to `<body>`, and mounts
+  `<Analytics />` from `@vercel/analytics/next` after `{children}`.
 
 **Important components:** `RootLayout` (default export) — wraps
 `{children}`, which is `app/page.tsx`'s output.
 
 **Dependencies / Related files:** Reads `site` from `data/site.ts` for the
-title, description, and URL. Imports `./globals.css` (this is the only
+description, URL, and the two parts of the title. Imports `./globals.css` (this is the only
 place global CSS is imported — removing this import would break all
 styling). The font CSS variables it defines are consumed by
 `tailwind.config.ts` (`fontFamily.display/body/mono`).
 
-**Safe to modify:** The page `title`/`description` text (via `data/site.ts`,
-not here directly — see below), swapping font families, adding more
-`<head>` tags (favicon, additional meta tags) inside the `metadata` object
-or JSX.
+**Safe to modify:** The page `description` text (via `data/site.ts`), the
+title separator (edited here, since the title template lives in this file),
+swapping font families, adding more `<head>` tags or meta tags inside the
+`metadata` object or JSX. The favicon is not set here: it comes from
+`app/icon.svg` via the Next.js file convention.
 
 **Be careful with:** The `metadataBase: new URL(site.url)` line requires
 `site.url` in `data/site.ts` to be a valid absolute URL — if that's ever
 malformed, the build throws. Removing a font import without also removing
 its usage in `tailwind.config.ts`/CSS will break the corresponding
 `font-display`/`font-body`/`font-mono` Tailwind classes site-wide.
+
+**Analytics:** `@vercel/analytics` is a dependency and `<Analytics />` is
+rendered on every page. It is only useful when the site is deployed on
+Vercel with Web Analytics enabled for the project. Removing the import and the
+component (and the dependency) is safe and affects nothing else.
 
 **What can break:** Deleting `import "./globals.css"` removes all styling
 from the entire site (it cascades to every page since this is the root
@@ -146,15 +161,19 @@ layout). Changing a font `variable` name here without updating
 **Purpose:** The homepage. Its only job is to lay out the sections in
 order.
 
-**Responsibilities:** Imports and renders, top to bottom: `Header`, `Hero`,
-`Projects`, `Skills`, `Capabilities`, `About`, `Contact`, `Footer`, plus the
-floating `BackToTop` button. `Header` and `BackToTop` are rendered outside
-`<main>` since they're fixed-position overlays, not in-flow content.
+**Responsibilities:** Imports and renders, top to bottom: `Header`, then a
+`<div className="relative">` containing `FloatingIcons` and
+`<main className="relative">` (`Hero`, `Projects`, `Skills`, `Capabilities`,
+`About`, `Contact`), then `Footer` and the floating `BackToTop` button.
+`Header` and `BackToTop` are rendered outside `<main>` since they're
+fixed-position overlays, not in-flow content, and `Footer` sits outside the
+wrapper div so the floating icons only span the `<main>` content.
 
 **Important components:** `Home` (default export).
 
 **Dependencies / Related files:** Imports every file in
-`components/sections/` and `components/ui/BackToTop.tsx`.
+`components/sections/` (including `FloatingIcons`) and
+`components/ui/BackToTop.tsx`.
 
 **Safe to modify:** **This is the file to edit if you want to reorder
 sections, remove a section entirely, or add a new one.** Just reorder,
@@ -188,7 +207,9 @@ scroll-reveal animation mechanics, and accessibility affordances.
   `--color-accent-dim`. These are the single source of truth for every
   color used across the site (Tailwind just aliases them — see
   `tailwind.config.ts`).
-- Sets `border-color` globally to the border token, smooth-scrolling
+- Sets `border-color` globally to the border token, a base `font-size` of
+  106.25% on `html` (17px instead of the browser default 16px, so every
+  `rem`-based Tailwind size scales up slightly), smooth-scrolling
   behavior, and `scroll-padding-top` (so anchor-jump navigation doesn't
   tuck content under the fixed header).
 - Defines `::selection` (text-selection highlight) color and visible
@@ -283,8 +304,11 @@ location, the header nav items, and every outbound social/contact URL.
 - `navItems`: the four links in the header nav (`Projects`, `Skills`,
   `About`, `Contact`), each an anchor (`#id`) into the page.
 - `socialLinks`: `github`, `email` (as a `mailto:` link), `telegram`,
-  `whatsapp`. **`email` and `whatsapp` are still placeholder values**,
-  flagged with a `TODO` comment — replace before deploying.
+  `whatsapp` (a `wa.me` link). Both now hold filled-in, real-looking values,
+  but the original `// TODO: replace placeholder email/WhatsApp values...`
+  comment is still above the object. Confirm they are the public ones you
+  want, then delete the comment. Note that a `wa.me` link necessarily
+  contains the phone number (see Known Drift item 10).
 
 **Dependencies / Related files:** Imported by `app/layout.tsx` (metadata),
 `Header.tsx` (wordmark + nav), `Hero.tsx` (name, title, tagline, location,
@@ -589,9 +613,9 @@ progress", "Completed", etc.).
 
 **Responsibilities:** Maps a `Project["status"]` value to a dot color via
 the `dotColor` record, then renders a colored dot + the status text.
-Currently three of the four statuses (`Completed`, `In progress`,
-`Actively in development`) use the accent color dot, and only `Local demo available`
-uses the muted gray dot.
+Current mapping: `Completed` and `In progress` use the accent dot,
+`Actively in development` uses a green dot (`bg-green-500`), and
+`Local demo available` uses the muted gray dot.
 
 **Dependencies / Related files:** Imports the `Project` type from
 `types/index.ts` — **`dotColor` is a `Record<Project["status"], string>`,
@@ -776,22 +800,28 @@ CTAs, social icons, and your photo.
 `flex-col-reverse` → `md:flex-row`, so the photo appears above the text on
 mobile but beside it on desktop). Left column: the accent vertical rule +
 name/title, tagline, location tag, the two CTA buttons, and the GitHub/
-Telegram/Email icon row. Right column: the photo, inside a bordered square
-frame with four corner-bracket accents (the "viewfinder" detail from the
-approved mockup) and a `grayscale(1) contrast(1.1)` CSS filter for the
-duotone look.
+Telegram/Email icon row. Right column: a pill reading "available for new
+projects" (monospace text with a pinging green dot; the ping is disabled
+under `motion-reduce`; on `md:` and up the pill is absolutely positioned above
+the photo, below that it stacks above it), then the photo inside a bordered
+square frame with four corner-bracket accents (the "viewfinder" detail from
+the approved mockup). The original design applied a `grayscale(1)
+contrast(1.1)` filter for a duotone look; see "Current state" below.
 
 **Dependencies / Related files:** Reads `site` and `socialLinks` from
 `data/site.ts`. Uses `Button`, `IconLink`, `Reveal` from `components/ui/`.
 Uses Next.js's `<Image>` component pointed at `/public/images/moeid.png`.
+It also imports `FloatingIcons` but never renders it (the component is
+rendered from `app/page.tsx` instead), so that import is unused.
 
 **Current state of the photo filter:** the filter has been removed in the code.
 The `<Image>` className is just `object-cover`, so the photo shows in full
 colour. The filter description above is the original design; add
 `[filter:grayscale(1)_contrast(1.1)]` back to the className to restore it.
 
-**Safe to modify:** All text is pulled from `data/site.ts`, so change it
-there rather than here. The photo filter (currently full grayscale +
+**Safe to modify:** The name, title, tagline and location are pulled from
+`data/site.ts`, so change them there rather than here. The "available for new
+projects" pill text is hard-coded in this file, not in `data/`. The photo filter (currently full grayscale +
 slight contrast boost) is a one-line CSS change:
 `className="object-cover [filter:grayscale(1)_contrast(1.1)]"` — remove
 the `[filter:...]` class entirely for full color, or adjust the
@@ -807,6 +837,42 @@ at build time for a missing file, but it will 404 in the browser.
 **What can break:** Nothing structural — this file is fairly
 self-contained. The main risk is a broken image path (silent 404, not a
 build error).
+
+---
+
+### `components/sections/FloatingIcons.tsx`
+
+**Purpose:** A purely decorative layer of 18 floating tech/brand icons down the
+left and right margins of the page, visible only on very wide screens.
+
+**Responsibilities:** Holds an `items` array (name, icon node, Tailwind position
+classes such as `left-[8%] top-[4%]`, and an animation delay) and renders each as
+a 56px bordered, semi-transparent tile in muted accent colour, bobbing via the
+`animate-float` utility. The wrapper is `aria-hidden`, `pointer-events-none`,
+`hidden` by default and `2xl:block` (so it does not render below the `2xl`
+breakpoint, 1536px), and `motion-reduce:animate-none` turns the bobbing off.
+Brand icons come from `simple-icons` (a small internal `Brand` component draws
+the icon's SVG `path` with `fill="currentColor"`); four generic icons (`Terminal`,
+`Laptop`, `Braces`, `Bot`) come from `lucide-react`. The brands used are Python,
+C++, GitHub, Ollama, SQLite, Git, pytest, Telegram, Docker, PostgreSQL,
+SQLAlchemy, OpenID, STMicroelectronics, and LM Studio.
+
+**Dependencies / Related files:** Rendered from `app/page.tsx`, inside the
+`relative` wrapper div that surrounds `<main>`. Needs the `float` keyframes and
+animation in `tailwind.config.ts` and the `simple-icons` package. It is a Server
+Component (no `"use client"`). Positions are percentages of the wrapper's
+height, so they spread out or bunch up if the page height changes.
+
+**Safe to modify:** Add, remove, or move items in the `items` array. Safe to
+remove entirely: delete the component, its line and import in `app/page.tsx`,
+the unused import in `Hero.tsx`, and (if nothing else needs them) the
+`simple-icons` dependency and the `float` animation.
+
+**Be careful with:** Each `si*` import must be a real export of the installed
+`simple-icons` version. All fourteen currently used exports were checked against
+`simple-icons@16.34.0` and exist. A name that does not exist is a build error,
+not a silent failure. Some icons (OpenID, STMicroelectronics) are not named in
+the Skills section; they are decoration only.
 
 ---
 
@@ -1038,6 +1104,8 @@ extra utilities.
 - `maxWidth.content: "1120px"` — the shared max-width used by every
   section's outer wrapper (`max-w-content`), controlling the page's
   overall content width.
+- `keyframes`/`animation` `float` (a 6s vertical bob) is used by
+  `FloatingIcons.tsx` via `animate-float`.
 - `backgroundImage`/`backgroundSize` (`dot-grid`) and `keyframes`/
   `animation` (`fade-up`) are defined but **currently unused** anywhere in
   the codebase — they were scaffolded per the approved mockup's "subtle
@@ -1130,8 +1198,12 @@ list.
 - `npm run start` — serves the production build (run `build` first).
 - `npm run lint` — runs ESLint using the Next.js default config.
 
-**Dependencies:** `next`, `react`, `react-dom`, `lucide-react` (the icon
-library used throughout `components/`). **Dev dependencies:**
+**Dependencies:** `next` (`^15.5.27`), `react` and `react-dom` (`^18.3.1`),
+`lucide-react` (`^0.383.0`, the line-icon library used throughout
+`components/`), `simple-icons` (`^16.34.0`, brand-logo SVG paths used only by
+`FloatingIcons.tsx`), and `@vercel/analytics` (`^2.0.1`, mounted in
+`app/layout.tsx`). There is also an `overrides` block that forces `next`'s
+`postcss` to `^8.5.23`. **Dev dependencies:**
 `typescript`, type packages (`@types/*`), `tailwindcss`, `postcss`,
 `autoprefixer`, `eslint`, `eslint-config-next`.
 
@@ -1139,7 +1211,7 @@ library used throughout `components/`). **Dev dependencies:**
 safe (`npm install <package>` updates this automatically). Bumping patch/
 minor versions is generally low-risk.
 
-**Be careful with:** Major-version bumps (e.g. Next.js 14 → 16, which
+**Be careful with:** Major-version bumps (e.g. Next.js 14 → 15 or 16, which
 `npm audit fix --force` can trigger, as it did during initial setup — see
 the terminal log from getting the project running) can introduce breaking
 changes to the App Router, `next/font`, or `next/image` APIs used
@@ -1181,11 +1253,14 @@ the tooling manage them.
 
 ## `public/images/`
 
-> **Deployment risk:** `.gitignore` contains `public/images/Moeid.png`. The code
-> uses `/images/moeid.png`. On Windows (case-insensitive) Git can treat these as
-> the same file and ignore your hero photo, so it would be missing on
-> Vercel/Cloudflare. Check with `git check-ignore -v public/images/moeid.png`
-> and remove that line from `.gitignore` if it matches.
+> **Resolved:** an earlier version of `.gitignore` contained
+> `public/images/Moeid.png`, which could cause Git on Windows
+> (case-insensitive) to ignore the hero photo `moeid.png`. The current
+> `.gitignore` no longer has that line (it ignores `/node_modules`, `/.next/`,
+> `/out/`, `/build`, `.DS_Store`, `*.pem`, debug logs, `.env*.local`,
+> `*.tsbuildinfo`, `next-env.d.ts` and `docs/moeid-portfolio.zip`). If the
+> photo ever goes missing after deploying, run
+> `git check-ignore -v public/images/moeid.png` to confirm.
 
 - **`moeid-placeholder.svg`** — a grey silhouette placeholder. Not referenced by
   any component at the moment.
@@ -1266,7 +1341,7 @@ app/globals.css   ([data-reveal] / [data-reveal="visible"] CSS rules
 | My name, title, tagline, location, age                     | `data/site.ts`                                        | `site` object |
 | Email / Telegram / WhatsApp / GitHub URLs                  | `data/site.ts`                                         | `socialLinks` |
 | Header nav links                                            | `data/site.ts`                                          | `navItems` |
-| Page `<title>` / meta description / share-preview text      | `data/site.ts` (content) + `app/layout.tsx` (structure) | `site.title`/`description`, `metadata` |
+| Page `<title>` / meta description / share-preview text      | `data/site.ts` (name, title, description) + `app/layout.tsx` (title separator and structure) | `site.name`/`title`/`description`, `metadata` |
 | A project's title, description, tech list, GitHub link, status | `data/projects.ts`                                   | the matching project object |
 | Adding a 5th project (with a new illustration)                | `types/index.ts`, `ProjectIllustrations.tsx`, `data/projects.ts` | see "Be careful with" notes on each |
 | Reordering/removing project cards                            | `data/projects.ts`                                     | array order |
@@ -1291,6 +1366,9 @@ app/globals.css   ([data-reveal] / [data-reveal="visible"] CSS rules
 | Scroll-reveal animation speed/distance                                | `app/globals.css`                                         | `[data-reveal]` transition properties |
 | Scroll-reveal trigger sensitivity (how much must be visible)           | `lib/useInView.ts`                                        | `threshold` default |
 | Back-to-top button appearance/position                                | `components/ui/BackToTop.tsx`                             | — |
+| Favicon                                                                  | replace `app/icon.svg`                                  | — |
+| Floating background icons (add/remove/move)                              | `components/sections/FloatingIcons.tsx`                 | the `items` array |
+| Vercel Analytics on/off                                                  | `app/layout.tsx` (+ `package.json` dependency)          | `<Analytics />` |
 | Social share preview image                                              | replace `public/images/og-image.png`                    | — |
 | Canonical site URL (for metadata)                                       | `data/site.ts`                                             | `site.url` |
 | npm scripts (dev/build/start/lint)                                       | `package.json`                                             | `scripts` |
@@ -1341,31 +1419,62 @@ created locally) the `.next/` and `node_modules/` folders — see the
 
 ---
 
-## Known Drift and Open Items (as of 2026-09-30)
+## Known Drift and Open Items (as of 2026-10-04)
 
 Things where the code, the docs, or the planning files disagree, or that still
-need a decision:
+need a decision. Items marked "Resolved" are kept for one revision so the history
+is clear.
 
-1. **Client components are six, not four:** `Header`, `BackToTop`, `Reveal`,
-   `useInView`, `Button`, `Contact`.
+1. **Client components are six:** `Header`, `BackToTop`, `Reveal`,
+   `useInView`, `Button`, `Contact`. (`FloatingIcons` is a Server Component.)
 2. **Contact layout** is simpler than the page spec (all buttons look primary,
-   no icon links). See the `Contact.tsx` section.
-3. **Em dash in page title:** `app/layout.tsx` builds the title as
-   `${site.name} — ${site.title}` (three places: `title`, `openGraph.title`,
-   `twitter.title`). The content rule says no em dashes anywhere on the site.
-   Replace with a colon, pipe, or hyphen.
+   no icon links). See the `Contact.tsx` section. The footer also shows
+   LinkedIn as "(currently unavailable)" where the page spec says
+   "Coming soon".
+3. **Page title separator:** the em dash was removed from `app/layout.tsx` on
+   purpose (Resolved for the no-em-dash rule). The title template is
+   `${site.name}  ${site.title}` with two plain spaces, so the live tab title
+   has no visible separator ("Moeid Ghiady Software Developer & ..."). Optional:
+   add a colon, pipe, or hyphen in all three places: `title`,
+   `openGraph.title`, `twitter.title`.
 4. **Skills list** in `data/skills.ts` has six categories. The content file
    (context 2) also lists "Digital Logic / FPGA (Quartus II, basic)". Decide
    whether it stays off the site or gets added.
 5. **Hero photo filter** was removed (full colour). The page spec still says
    "subtle dark duotone".
-6. **`data/site.ts`:** the `email` and `whatsapp` values now look filled in, but
-   the `// TODO: replace placeholder...` comment is still there. Confirm they
-   are the public ones you want, then delete the comment.
+6. **`data/site.ts`:** the `email` and `whatsapp` values are the real, public
+   ones. The `// TODO: replace placeholder...` comment above `socialLinks` is
+   stale and can be deleted.
 7. **Fifth project (game)** is still pending. Adding it needs the three-step
    change described under `data/projects.ts`.
-8. **Next.js version:** the terminal shows 16.3.6 (Turbopack). The copies of
-   `package.json` and `package-lock.json` in the project files still show
-   `^14.2.5`. Re-export them so the project files match.
+8. **Next.js version (Resolved in the docs):** `package.json` and
+   `package-lock.json` now show `next` `^15.5.27` / 15.5.27 (React 18.3.1).
+   Earlier docs mentioned 16.3.6 with Turbopack and 14.2.5; neither matches the
+   current files. `tsconfig.json` still includes `.next/dev/types/**/*.ts`,
+   which looks like a leftover from an earlier Next.js version; it is harmless.
+   `eslint-config-next` is still `^14.2.35`, one major behind `next`.
 9. **Project files vs local code:** the `Contact.tsx` and `Button.tsx` in the
    project files should be the current versions (with `"use client"`).
+10. **WhatsApp number (Resolved by decision):** the content file said the phone
+    number is never published. The owner has since chosen to publish it
+    through the `wa.me` WhatsApp link on purpose, so the "phone number" content
+    exclusion no longer applies to that link. No other place on the site shows
+    the number.
+11. **About copy (Resolved by decision):** `About.tsx` is the owner's own
+    first-person wording and is now authoritative. The third-person "working
+    toward freelance readiness" text in context 2 is superseded.
+12. **"available for new projects" pill in the Hero:** the owner intends it to
+    mean "ready to be hired". The wording is hard-coded in `Hero.tsx`. Possible
+    clearer wording ("Open to work", "Available for hire") is pending a
+    decision.
+13. **Unused code and config:** the `FloatingIcons` import in `Hero.tsx`, the
+    `dot-grid` background utilities and `fade-up` animation in
+    `tailwind.config.ts`, `public/images/moeid-placeholder.svg`, and the
+    `site.university` field are not used anywhere.
+14. **`.gitignore` photo risk (Resolved):** the `public/images/Moeid.png` line
+    is no longer present.
+15. **Deployed site vs placeholder domain:** the site is live on Vercel at
+    `portfolio-chi-green-13ro5dp3d1.vercel.app`, but `site.url` is still the
+    placeholder `https://moeidghiady.dev`, so the live `og:url`, `og:image`
+    and `twitter:image` tags point at that domain. Link previews will not show
+    the OG image until `site.url` matches the real domain.
