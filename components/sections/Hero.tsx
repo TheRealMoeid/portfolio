@@ -3,12 +3,13 @@ import { site, socialLinks } from "@/data/site";
 import { Button } from "@/components/ui/Button";
 import { IconLink } from "@/components/ui/IconLink";
 import { Reveal } from "@/components/ui/Reveal";
+import { FloatingIcons } from "@/components/sections/FloatingIcons";
 
 export function Hero() {
   return (
     <section
       id="top"
-      className="mx-auto flex max-w-content flex-col-reverse items-center gap-12 px-6 pb-20 pt-32 md:flex-row md:items-center md:pt-40"
+      className="mx-auto flex max-w-content flex-col-reverse items-center gap-12 px-6 pb-20 pt-32 md:flex-row md:items-start md:pt-40"
     >
       <Reveal className="flex-1">
         <div className="flex items-start gap-4">
@@ -50,8 +51,11 @@ export function Hero() {
         </div>
       </Reveal>
 
-      <Reveal className="flex shrink-0 flex-col items-center gap-6" delay={120}>
-        <div className="inline-flex items-center gap-3 rounded-full border border-border bg-surface px-4 py-2 font-mono text-sm text-foreground">
+      <Reveal
+        className="flex shrink-0 flex-col items-center gap-6 md:relative"
+        delay={120}
+      >
+        <div className="inline-flex items-center gap-3 whitespace-nowrap rounded-full border border-border bg-surface px-4 py-2 font-mono text-sm text-foreground md:absolute md:-top-16 md:left-1/2 md:-translate-x-1/2">
           <span className="relative flex h-3 w-3">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75 motion-reduce:animate-none" />
             <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500" />
