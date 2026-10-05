@@ -9,7 +9,7 @@ export const site = {
   location: "Based in Iran, Tabriz",
   age: "23",
   university: "Computer Engineering student",
-  url: "https://moeidghiady.dev",
+  url: "https://portfolio-chi-green-13ro5dp3d1.vercel.app",
   description:
     "Portfolio of Moeid Ghiady, a Computer Engineering student building practical software: Telegram bots, backend systems, and AI-powered applications.",
 };
