@@ -3,7 +3,6 @@ import { site, socialLinks } from "@/data/site";
 import { Button } from "@/components/ui/Button";
 import { IconLink } from "@/components/ui/IconLink";
 import { Reveal } from "@/components/ui/Reveal";
-import { FloatingIcons } from "@/components/sections/FloatingIcons";
 
 export function Hero() {
   return (

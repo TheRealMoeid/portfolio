@@ -13,13 +13,13 @@ export function About() {
         <Reveal>
           <div className="space-y-5 text-muted">
             <p>
-              I'm a Computer Engineering student interested in building practical 
+              I&apos;m a Computer Engineering student interested in building practical 
               software, backend systems, automation tools, and AI-powered 
               applications. Most of my experience comes from personal projects, 
               including Telegram bots and backend development.
             </p>
             <p>
-              I'm continuing to develop my skills through hands-on projects, 
+              I&apos;m continuing to develop my skills through hands-on projects, 
               focusing on writing reliable, maintainable software and preparing 
               for professional development work.
             </p>

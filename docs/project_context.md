@@ -529,5 +529,5 @@ Before making implementation decisions:
 
 **Implementation status:** v1 built (Next.js App Router; `package.json` pins Next.js `^15.5.27`). See `PROJECT_FILE_GUIDE.md` for the code map and `README.md` for the pre-deploy checklist.
 
-**Next step:** Work through the README pre-deploy checklist (real domain in `site.url`, OG image, LinkedIn, optionally a title separator and clearer Hero pill wording), add the fifth project when ready, test on real devices, then deploy. (The `.gitignore` photo problem and the em dash in the title are already fixed, and the site is already deployed on Vercel at `portfolio-chi-green-13ro5dp3d1.vercel.app`.)
+**Next step:** Work through the README pre-deploy checklist (OG image, custom domain if chosen, LinkedIn, optionally a title separator and clearer Hero pill wording), add the fifth project when ready, test on real devices, then deploy. (The `.gitignore` photo problem and the em dash in the title are already fixed, and the site is already deployed on Vercel at `portfolio-chi-green-13ro5dp3d1.vercel.app`.)
 

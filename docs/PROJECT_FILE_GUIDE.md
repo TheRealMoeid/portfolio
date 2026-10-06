@@ -1473,8 +1473,7 @@ is clear.
     `site.university` field are not used anywhere.
 14. **`.gitignore` photo risk (Resolved):** the `public/images/Moeid.png` line
     is no longer present.
-15. **Deployed site vs placeholder domain:** the site is live on Vercel at
-    `portfolio-chi-green-13ro5dp3d1.vercel.app`, but `site.url` is still the
-    placeholder `https://moeidghiady.dev`, so the live `og:url`, `og:image`
-    and `twitter:image` tags point at that domain. Link previews will not show
-    the OG image until `site.url` matches the real domain.
+15. **Site URL (Resolved):** `site.url` was the placeholder
+    `https://moeidghiady.dev`; it is now `https://portfolio-chi-green-13ro5dp3d1.vercel.app`,
+    the address the site is live on, so `og:url`, `og:image` and `twitter:image`
+    resolve correctly. Update it again if a custom domain is added.
