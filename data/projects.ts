@@ -42,4 +42,14 @@ export const projects: Project[] = [
       "https://github.com/TheRealMoeid/stm32_Smart_Fire_System_Management",
     illustration: "firesystem",
   },
+  {
+    slug: "square-baby",
+    title: "Square Baby",
+    description:
+      "A C++/SDL2 survival game where you collect health items to grow, avoid hazards and enemies, and try to reach the target size before shrinking away.",
+    tech: ["C++", "SDL2", "2D Game Development"],
+    status: "Completed",
+    github: "https://github.com/TheRealMoeid/Square_Baby",
+    illustration: "squarebaby",
+  },
 ];
