@@ -21,9 +21,12 @@ export function Projects() {
       <div className="grid gap-6 sm:grid-cols-2">
         {projects.map((project, i) => (
           <Reveal key={project.slug} delay={i * 80}>
-            <Card className="flex h-full flex-col p-0">
-              <div className="flex h-32 items-center justify-center border-b border-border bg-background/40 p-6">
-                <ProjectIllustration illustration={project.illustration} />
+            <Card className="flex h-full flex-col overflow-hidden p-0">
+              <div className="relative h-44 sm:h-48 border-b border-border bg-background/40">
+                <ProjectIllustration
+                  illustration={project.illustration}
+                  title={project.title}
+                />
               </div>
 
               <div className="flex flex-1 flex-col p-6">

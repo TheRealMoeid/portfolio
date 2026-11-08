@@ -7,7 +7,7 @@ export interface Project {
   github: string;
   demo?: string;
   /** Identifier mapped to a line-art illustration component in Projects.tsx */
-  illustration: "shopmate" | "vpnvend" | "mediabot" | "firesystem";
+  illustration: "shopmate" | "vpnvend" | "mediabot" | "firesystem" | "squarebaby";
 }
 
 export interface SkillCategory {
