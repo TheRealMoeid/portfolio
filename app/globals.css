@@ -3,13 +3,20 @@
 @tailwind utilities;
 
 :root {
-  --color-background: #141417;
-  --color-surface: #1c1c21;
-  --color-foreground: #ededef;
-  --color-muted: #a3a3ad;
-  --color-border: #2e2e35;
-  --color-accent: #3d6fff;
-  --color-accent-dim: #1c2748;
+  /* Base palette */
+  --color-background: #0f0f12;
+  --color-surface: #18181d;
+  --color-foreground: #f5f5f7;
+  --color-muted: #a1a1a6;
+  --color-border: #27272d;
+
+  /* Accent: Warm amber for premium feel */
+  --color-accent: #d97706;
+  --color-accent-dim: #42280f;
+
+  /* Gradients */
+  --gradient-accent: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+  --gradient-subtle: linear-gradient(135deg, #18181d 0%, #27272d 100%);
 }
 
 * {
@@ -56,12 +63,11 @@ button:focus-visible,
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
-    }
+  }
 
   [data-reveal] {
     opacity: 1;
     transform: none;
     transition: none;
   }
-
 }

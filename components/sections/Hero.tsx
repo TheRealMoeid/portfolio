@@ -8,69 +8,67 @@ export function Hero() {
   return (
     <section
       id="top"
-      className="mx-auto flex max-w-content flex-col-reverse items-center gap-12 px-6 pb-20 pt-32 md:flex-row md:items-start md:pt-40"
+      className="mx-auto flex max-w-content flex-col items-center gap-16 px-6 pb-24 pt-32 md:flex-row md:items-center md:pt-40 lg:gap-20"
     >
       <Reveal className="flex-1">
-        <div className="flex items-start gap-4">
-          <span
-            aria-hidden="true"
-            className="mt-2 h-16 w-px shrink-0 bg-accent md:h-20"
-          />
+        <div className="space-y-6">
           <div>
-            <h1 className="font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+            <p className="text-sm font-semibold tracking-widest text-accent uppercase">
+              Welcome
+            </p>
+            <h1 className="mt-3 font-display text-5xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-7xl">
               {site.name}
             </h1>
-            <p className="mt-2 text-lg font-medium text-accent">
+            <p className="mt-4 text-xl font-medium text-accent">
               {site.title}
             </p>
           </div>
-        </div>
 
-        <p className="mt-6 max-w-md text-muted">{site.tagline}</p>
+          <p className="max-w-lg text-lg leading-relaxed text-muted">
+            {site.tagline}
+          </p>
 
-        <p className="mt-4 font-mono text-xs text-muted">{site.location}</p>
+          <p className="font-mono text-xs uppercase tracking-widest text-muted/60">
+            {site.location}
+          </p>
 
-        <div className="mt-8 flex flex-wrap gap-4">
-          <Button href="#projects" variant="primary">
-            View Projects
-          </Button>
-          <Button href="#contact" variant="outline">
-            Get in Touch
-          </Button>
-        </div>
+          <div className="flex flex-wrap gap-4 pt-2">
+            <Button href="#projects" variant="primary">
+              View Projects
+            </Button>
+            <Button href="#contact" variant="outline">
+              Get in Touch
+            </Button>
+          </div>
 
-        <div className="mt-10 flex gap-6">
-          <IconLink href={socialLinks.github} icon="Github" label="GitHub" />
-          <IconLink
-            href={socialLinks.telegram}
-            icon="Send"
-            label="Telegram"
-          />
-          <IconLink href={socialLinks.email} icon="Mail" label="Email" />
+          <div className="flex gap-8 pt-6">
+            <IconLink href={socialLinks.github} icon="Github" label="GitHub" />
+            <IconLink
+              href={socialLinks.telegram}
+              icon="Send"
+              label="Telegram"
+            />
+            <IconLink href={socialLinks.email} icon="Mail" label="Email" />
+          </div>
         </div>
       </Reveal>
 
       <Reveal
-        className="flex shrink-0 flex-col items-center gap-6 md:relative"
+        className="flex shrink-0 flex-col items-center gap-6 md:relative md:flex-1"
         delay={120}
       >
-        <div className="inline-flex items-center gap-3 whitespace-nowrap rounded-full border border-border bg-surface px-4 py-2 font-mono text-sm text-foreground md:absolute md:-top-16 md:left-1/2 md:-translate-x-1/2">
+        <div className="inline-flex items-center gap-3 whitespace-nowrap rounded-full border border-border bg-surface/50 px-4 py-2 font-mono text-xs font-medium text-foreground">
           <span className="relative flex h-3 w-3">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75 motion-reduce:animate-none" />
-            <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500" />
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75 motion-reduce:animate-none" />
+            <span className="relative inline-flex h-3 w-3 rounded-full bg-accent" />
           </span>
-          Open to work
+          Available for work
         </div>
 
-        <div className="relative h-48 w-48 sm:h-60 sm:w-60 md:h-72 md:w-72 lg:h-80 lg:w-80">
-          <div className="absolute inset-0 rounded-2xl border border-accent" />
-          {/* Corner-bracket accents for the "technical/viewfinder" feel */}
-          <span className="absolute -left-2 -top-2 h-6 w-6 border-l-2 border-t-2 border-accent" />
-          <span className="absolute -right-2 -top-2 h-6 w-6 border-r-2 border-t-2 border-accent" />
-          <span className="absolute -bottom-2 -left-2 h-6 w-6 border-b-2 border-l-2 border-accent" />
-          <span className="absolute -bottom-2 -right-2 h-6 w-6 border-b-2 border-r-2 border-accent" />
-
-          <div className="absolute inset-3 overflow-hidden rounded-xl bg-surface">
+        <div className="relative h-56 w-56 sm:h-72 sm:w-72 md:h-96 md:w-96">
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-accent/20 to-transparent blur-3xl" />
+          <div className="relative h-full w-full overflow-hidden rounded-2xl border border-border bg-surface">
+            <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-transparent" />
             <Image
               src="/images/moeid.png"
               alt={`Portrait of ${site.name}`}
